@@ -13,5 +13,5 @@
 obtain.EDR<-function(result){
   y<-result[[1]] #return edr
   data.ref<-Reduce("+",y)/length(y)
-  return(list(data.ref,y))
+  return(data.ref)
 }
