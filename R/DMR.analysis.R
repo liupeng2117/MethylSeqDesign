@@ -1,11 +1,10 @@
-#' Title Differential methylation analysis on pilot data
+#' Differential methylation analysis on pilot data
 #'
 #' @param x a vector containing study design information, the number of each element is 
 #' the sample size for each group, the length of x is the number of groups. E.g., if 
 #' there are two groups with equal sample size 5, x=c(5,5)
 #' @param cov.matrix a matrix of coverage, the rows are genes and columns are samples
-#' @param methyl.matrix a matrix of methylated read count, the rows are genes and columns are samples.
-#'
+#' @param methyl.matrix a matrix of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.
 #' @return a list of two, one is the p values of each gene, the second element is a vector of 
 #' model parameters 
 #' @export DMR.analysis
