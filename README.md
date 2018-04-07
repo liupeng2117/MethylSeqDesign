@@ -1,4 +1,4 @@
- 20# MethylSeqDesign
+# MethylSeqDesign
 An R package for the study design and power calculation issues of Methyl-Seq experiments.
 ## Installation
 You can install this package by copying and paste the following code into R
