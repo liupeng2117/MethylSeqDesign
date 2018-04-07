@@ -163,7 +163,10 @@ Estimate.EDR.from.pilot <- function(p.values, model,thresh.p=0.005,
         #print(x)
         Resampling(target.N)
       })
-      return(list(Result = Result, Model = Fitted.Model, p = p.values, Number.DE = sum(q.value < FDR))) ##?
+      
+      ave.result<-Reduce("+",Result)/length(Result)
+      pred<-list(EDR=ave.result["EDR",],DeclareDE=ave.result["DeclareDE",],FDR=ave.result["FDR",])
+      return(pred) 
     }
   }
 }
