@@ -2,4 +2,3 @@
 
 export(DMR.analysis)
 export(Estimate.EDR.from.pilot)
-export(obtain.EDR)

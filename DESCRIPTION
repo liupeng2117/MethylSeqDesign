@@ -1,15 +1,10 @@
 Package: MethylSeqDesign
-Title: Study design and power calculation for DNA methylation studies
+Title: What the Package Does (one line, title case)
 Version: 0.0.0.9000
-Authors@R: person("Peng", "Liu", email = "pel67@pitt.edu", role = c("aut", "cre"))
-Description: Over the past few year, DNA methylation sequencing has become a popular technology to identify the disease-related methylation alterations. We proposed a novel power calculation and study design procedure, which utilize the information from the pilot data to infer the power with targeted sample size. This procedure includes four steps: differential methylation analysis on pilot data, mixture model fitting on the resulting p values, transformation of Wald test statistics, and smoothing. 
-Depends: R (>= 3.3.3)
-License: MIT
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.4.3)
+License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Suggests: knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Imports: qvalue
-Depends: pi0

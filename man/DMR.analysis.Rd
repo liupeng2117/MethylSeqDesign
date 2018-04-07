@@ -2,7 +2,7 @@
 % Please edit documentation in R/DMR.analysis.R
 \name{DMR.analysis}
 \alias{DMR.analysis}
-\title{Title Differential methylation analysis on pilot data}
+\title{Differential methylation analysis on pilot data}
 \usage{
 DMR.analysis(x, cov.matrix, methyl.matrix)
 }
@@ -13,12 +13,12 @@ there are two groups with equal sample size 5, x=c(5,5)}
 
 \item{cov.matrix}{a matrix of coverage, the rows are genes and columns are samples}
 
-\item{methyl.matrix}{a matrix of methylated read count, the rows are genes and columns are samples.}
+\item{methyl.matrix}{a matrix of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.}
 }
 \value{
 a list of two, one is the p values of each gene, the second element is a vector of 
 model parameters
 }
 \description{
-Title Differential methylation analysis on pilot data
+Differential methylation analysis on pilot data
 }

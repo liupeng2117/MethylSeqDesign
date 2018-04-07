@@ -4,13 +4,17 @@
 \alias{Estimate.EDR.from.pilot}
 \title{Title Estimate EDR based on p values}
 \usage{
-Estimate.EDR.from.pilot(p.values, model, thresh.p = 0.005, FDR = 0.05,
-  M = 10, N0, target.N, method = "CBUM+CDD", transform.null = F)
+Estimate.EDR.from.pilot(p.values, model, N0, target.N, thresh.p = 0.005,
+  FDR = 0.05, M = 10, method = "CBUM+CDD")
 }
 \arguments{
 \item{p.values}{resulting p values from DMR analysis}
 
 \item{model}{results from DMR analysis}
+
+\item{N0}{pilot sample size per group}
+
+\item{target.N}{target sample size per group}
 
 \item{thresh.p}{threshold for CBUM mixture model fitting, default is set to 0.005}
 
@@ -18,13 +22,7 @@ Estimate.EDR.from.pilot(p.values, model, thresh.p = 0.005, FDR = 0.05,
 
 \item{M}{Number of parametric bootstrap, default is 10}
 
-\item{N0}{pilot sample size per group}
-
-\item{target.N}{target sample size per group}
-
-\item{method}{by defualt "CBUM+CDD"}
-
-\item{transform.null}{equals False, we do not transform test statistics for non-DMR genes}
+\item{method}{by defualt 'CBUM+CDD'}
 }
 \value{
 a list of estimation result
