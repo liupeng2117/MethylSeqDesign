@@ -15,23 +15,24 @@ data(Mouse)
 ```
 * Perform differential methylation analysis
 ```
-dmr.result<-DMR.analysis(c(3,3),Mouse$cov.matrix,Mouse$methyl.matrix)
+dmr.result<-DMR.analysis(3, Mouse$cov.matrix, Mouse$methyl.matrix)
 ```
 * Predict expected discovery rate(EDR) when there are 20 samples in each group, which is the genome wide power we are interested in. EDR=the number of detected DMR/The total number of DMR
 ```
-Estimate.EDR.from.pilot(dmr.result[[1]],model=dmr.result[[2]],N0=3,target.N=20)
+set.seed(123)
+Estimate.EDR.from.pilot(dmr.result$p.values, model=dmr.result$model, N0=3, target.N=20)
 ```
 ## How to interpret the results
 
 ```
-$EDR
-[1] 0.9330382
+$`EDR`
+[1] 0.9326
 
 $DeclareDMR
-[1] 159.3
+[1] 1938
 
 $FDR
-[1] 0.04767486
+[1] 0.05
 ```
 
 EDR is the predicted genome wide power, DeclareDMR is the number of declared DMRs. FDR is the type I error level estimated by bootstrap procedure, by default we control type I error at 0.05. 
