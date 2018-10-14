@@ -2,3 +2,6 @@
 
 export(DMR.analysis)
 export(Estimate.EDR.from.pilot)
+export(designOptim)
+export(plot3d)
+export(plotContour)

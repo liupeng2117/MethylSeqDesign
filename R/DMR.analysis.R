@@ -1,41 +1,100 @@
 #' Differential methylation analysis on pilot data
 #'
-#' @param x a vector containing study design information, the number of each element is 
-#' the sample size for each group, the length of x is the number of groups. E.g., if 
-#' there are two groups with equal sample size 5, x=c(5,5)
-#' @param cov.matrix a matrix of coverage, the rows are genes and columns are samples
-#' @param methyl.matrix a matrix of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.
-#' @return a list of two, one is the p values of each gene, the second element is a vector of 
-#' model parameters 
+#' @param N0 a numeric vector of length 2 containing sample size of the pilot data, the number of each element is 
+#' the sample size for each group. If the two groups have the same sample size, N0 can be a single numeric value. 
+#' @param cov.matrix a numeric matrix or data frame of coverage, the rows are genes and columns are samples.
+#' @param methyl.matrix a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.
+#' @param prop a numeric vector meaning the proportion of subsampling. If you do not want to do subsampling, set prop=1.
+#' @return a list of three element, the first element is a vector of p values for each gene, the second element is a matrix of 
+#' model parameters and estimated tagwise dispersion fai. The third element is a matrix of ratios for different prop. 
 #' @export DMR.analysis
 #'
 #' @examples
-DMR.analysis <- function(x, cov.matrix, methyl.matrix) {
-    fai.est <- estimate.fai2(x = x, cov.matrix, methyl.matrix)
-    test.result <- Z.wald(x, cov.matrix, methyl.matrix, fai = fai.est, a = 1)
+DMR.analysis <- function(N0, cov.matrix, methyl.matrix, prop = 1) {
+    if (class(N0) != "numeric" | length(N0) > 2) {
+        stop("Argument N0 is not correctly specified")
+    } else if (length(N0) == 1) {
+        N0 = rep(N0, 2)
+    }
+    if (class(cov.matrix) == "data.frame") {
+        cov.matrix = as.matrix(cov.matrix)
+    }
+    if (class(methyl.matrix) == "data.frame") {
+        methyl.matrix = as.matrix(methyl.matrix)
+    }
+    if (class(cov.matrix) != "matrix") {
+        stop("input coverage matrix should be either matrix or data frame")
+    }
+    if (class(methyl.matrix) != c("matrix")) {
+        stop("input coverage matrix should be either matrix or data frame")
+    }
+    if (!"DropletUtils" %in% rownames(installed.packages())) {
+        install.packages("DropletUtils")
+    }
+    library(DropletUtils)
+    
+    print(paste(N0, sep = "", collapse = " vs "))
+    fai.est <- estimate.fai(x = N0, cov.matrix, methyl.matrix)
+    test.result <- Z.wald(x = N0, cov.matrix, methyl.matrix, fai = fai.est, a = 1)
     p.values <- test.result[[1]]
-    model <- cbind(beta0 = test.result[[1]], beta1 = test.result[[2]], fai = fai.est)
-    return(list(p.values, model))
+    # calculate ratio of psai
+    factorR <- matrix(, nrow = length(p.values), ncol = length(prop))
+    colnames(factorR) <- prop
+    for (i in 1:length(prop)) {
+        cov.matrix1 <- downsampleMatrix(cov.matrix, prop = prop[i])
+        data0 = data1 = cov.matrix
+        for (j in 1:sum(N0)) {
+            m0 <- cov.matrix[, j]
+            m1 <- cov.matrix1[, j]
+            data0[, j] <- m0/(1 + (m0 - 1) * fai.est)
+            data1[, j] <- m1/(1 + (m1 - 1) * fai.est)
+        }
+        
+        mean.group1 <- apply(data0[, 1:N0[1], drop = F], 1, mean)
+        mean.group2 <- apply(data0[, (N0[1] + 1):sum(N0), drop = F], 1, mean)
+        psai0 <- (mean.group1 + mean.group2)/(mean.group1 * mean.group2)
+        
+        mean.group1 <- apply(data1[, 1:N0[1], drop = F], 1, mean)
+        mean.group2 <- apply(data1[, (N0[1] + 1):sum(N0), drop = F], 1, mean)
+        psai1 <- (mean.group1 + mean.group2)/(mean.group1 * mean.group2)
+        
+        factorR[, i] = psai0/psai1
+    }
+    
+    model <- cbind(beta0 = test.result[[2]], beta1 = test.result[[3]], fai = fai.est)
+    return(list(p.values = p.values, model = model, factorR = factorR))
 }
+
 
 
 # Z-value + wald-test
 Z.wald <- function(x, cov.matrix, sim.meth, fai, a = 1) {
-    G <- dim(cov.matrix)[1]
     D <- sum(x)
+    G <- dim(cov.matrix)[1]
+    if (dim(cov.matrix)[2] != D) {
+        stop("sample size and coverage data matrix columns differ")
+    }
+    if (dim(sim.meth)[2] != D) {
+        stop("sample size and methylation data matrix columns differ")
+    }
     n.groups <- length(x)
-    # Assign each group size
+    if (n.groups > 2) {
+        stop("Currently more than 2 groups is not allowed")
+    }
     
+    # Assign each group size
     for (i in 1:n.groups) {
         assign(paste0("D", i), x[i])
     }
     
     ### calculate beta1-hat
     chi2 <- rep(0, G)
+    beta0.hat <- rep(0, G)
+    beta1.hat <- rep(0, G)
     
     for (i in 1:G) {
         tryCatch({
-            X <- matrix(c(rep(1, D), rep(1, D1), rep(0, D - D1)), ncol = 2)
+            X <- matrix(c(rep(1, D), rep(1, D1), rep(0, D2)), ncol = 2)
             
             if (n.groups > 2) {
                 c <- D1
@@ -50,24 +109,26 @@ Z.wald <- function(x, cov.matrix, sim.meth, fai, a = 1) {
             Z <- asin(2 * (sim.meth[i, ] + a)/(cov.matrix[i, ] + 2 * a) - 1)
             sigma <- solve(t(X) %*% V.inverse %*% X)
             beta.hat <- sigma %*% t(X) %*% V.inverse %*% Z
+            beta0.hat[i] <- beta.hat[1]
+            beta1.hat[i] <- beta.hat[2]
             
             C <- diag(rep(1, n.groups))[, -1]
             var <- t(C) %*% sigma %*% C
             chi2[i] <- t(t(C) %*% beta.hat) %*% solve(var) %*% (t(C) %*% beta.hat)
         }, error = function(err) {
             # error handler picks up where error was generated
-            print(paste("MY_ERROR:  ", err))
+            print(paste("ERROR:  ", err))
         })
     }
     # Calculate test statistic, p and q values
     p.Zw <- pchisq(chi2, df = n.groups - 1, lower.tail = F)
-    return(list(p.Zw = p.Zw, z.statistic = chi2))
+    return(list(p.Zw = p.Zw, beta0 = beta0.hat, beta1 = beta1.hat, z.statistic = chi2))
 }
 
 
 
 ## Estimate fai using park's method
-estimate.fai2 <- function(cov.matrix, methyl.matrix, a = 1, x) {
+estimate.fai <- function(cov.matrix, methyl.matrix, a = 1, x) {
     G <- dim(cov.matrix)[1]
     D <- dim(cov.matrix)[2]
     n.groups <- length(x)
@@ -94,7 +155,7 @@ estimate.fai2 <- function(cov.matrix, methyl.matrix, a = 1, x) {
                 }
                 Z <- asin(2 * (methyl.matrix[i, ] + a)/(cov.matrix[i, ] + 2 * a) - 1)
                 sigma <- solve(t(X) %*% V0.inverse %*% X)
-                beta.hat0 <- sigma %*% t(X) %*% V0.inverse %*% Z
+                beta.hat0 <- sigma %*% t(X) %*% V0.inverse %*% as.matrix(Z)
                 chi2 <- sum(cov.matrix[i, ] * (Z - X %*% beta.hat0)^2)
                 sigma2.hat <- chi2/(D - n.groups)
                 fai[i] <- (D * (sigma2.hat - 1))/sum(cov.matrix[i, ] - 1)
@@ -110,3 +171,4 @@ estimate.fai2 <- function(cov.matrix, methyl.matrix, a = 1, x) {
     }
     return(fai.est)
 }
+

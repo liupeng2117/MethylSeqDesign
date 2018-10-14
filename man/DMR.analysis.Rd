@@ -4,20 +4,21 @@
 \alias{DMR.analysis}
 \title{Differential methylation analysis on pilot data}
 \usage{
-DMR.analysis(x, cov.matrix, methyl.matrix)
+DMR.analysis(N0, cov.matrix, methyl.matrix, prop = 1)
 }
 \arguments{
-\item{x}{a vector containing study design information, the number of each element is 
-the sample size for each group, the length of x is the number of groups. E.g., if 
-there are two groups with equal sample size 5, x=c(5,5)}
+\item{N0}{a numeric vector of length 2 containing sample size of the pilot data, the number of each element is 
+the sample size for each group. If the two groups have the same sample size, N0 can be a single numeric value.}
 
-\item{cov.matrix}{a matrix of coverage, the rows are genes and columns are samples}
+\item{cov.matrix}{a numeric matrix or data frame of coverage, the rows are genes and columns are samples.}
 
-\item{methyl.matrix}{a matrix of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.}
+\item{methyl.matrix}{a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.}
+
+\item{prop}{a numeric vector meaning the proportion of subsampling. If you do not want to do subsampling, set prop=1.}
 }
 \value{
-a list of two, one is the p values of each gene, the second element is a vector of 
-model parameters
+a list of three element, the first element is a vector of p values for each gene, the second element is a matrix of 
+model parameters and estimated tagwise dispersion fai. The third element is a matrix of ratios for different prop.
 }
 \description{
 Differential methylation analysis on pilot data
