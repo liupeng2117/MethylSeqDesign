@@ -77,12 +77,12 @@ The result is a MethylSeqDesign object, where the first element is a matrix of p
 ```
 plotContour(predict.result)
 ```
-![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/img/Contour.png)
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/tree/master/img/Contour.png)
 * 3D plot
 ```
 plot3D(predict.result)
 ```
-![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/img/3D.png)
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/tree/master/img/3D.png)
 ## Study Design
 * The pilot data has 40 million reads per sample, and we want to know the minimun budget to achieve 80% power
 ```
