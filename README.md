@@ -84,12 +84,12 @@ plot3D(predict.result)
 ```
 ![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/3D.png)
 ## Study Design
-* The pilot data has 40 million reads per sample, and we want to know the minimun budget to achieve 80% power
+* Goal1: the minimun budget to achieve 80% power
 ```
 designOptim(predict.result, pilot.R=40, prop, N, targetEDR=0.8)
 ```
 
-* The pilot data has 40 million reads per sample, and we want to know the maximum power under $20000 budget
+* Goal2: we want to know the maximum power under $20000 budget
 ```
 designOptim(predict.result, pilot.R=40, prop, N, budget=20000)
 ```
