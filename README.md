@@ -88,8 +88,28 @@ plot3D(predict.result)
 ```
 designOptim(predict.result, pilot.R=40, prop, N, targetEDR=0.8)
 ```
+```
+$`min.budget`
+[1] 6400
+
+$optim.N
+[1] 12 12
+
+$optim.R
+[1] 8
+```
 
 * Goal2: we want to know the maximum power under $20000 budget
 ```
 designOptim(predict.result, pilot.R=40, prop, N, budget=20000)
+```
+```
+$`max.EDR`
+[1] 0.9877
+
+$optim.N
+[1] 40
+
+$optim.R
+[1] 8
 ```
