@@ -90,7 +90,7 @@ plot3d(predict.result)
 ## Study Design
 * Goal1: the minimun budget to achieve 80% power
 ```
-design.res1<-designOptim(predict.result, pilot.R=pilot.R, targetEDR=0.8)
+design.res1<-designOptim(predict.result, pilot.R=pilot.R, R=R, N=N, targetEDR=0.8)
 design.res1$res
 ```
 ```
