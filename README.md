@@ -16,55 +16,59 @@ data(Mouse)
 ```
 * Perform differential methylation analysis. prop specifies the proportion of subsampling. By subsampling, we vary the sequencing depth of pilot data.
 ```
-prop=c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0)
-dmr.result<-DMR.analysis(N0=3,cov.matrix=Mouse$cov.matrix, methyl.matrix=Mouse$methyl.matrix, prop=prop)
+pilot.R=1/4
+R=c(1/15, 1/10, 1/8, 1/6, 1/4)
+dmr.result<-DMR.analysis(N0=3,cov.matrix=Mouse$cov.matrix, methyl.matrix=Mouse$methyl.matrix, pilot.R=pilot.R, R=R)
 ```
 * Predict expected discovery rate(EDR) when there are N=2,6,12,30,40,50 samples in each group. EDR is the genome wide power we are interested in. EDR=the number of detected DMR/The total number of DMR. This step may take a few minutes
 ```
-N=c(2,6,12,20,30,40,50)
+N=seq(4,50,2)
 predict.result<-Estimate.EDR.from.pilot(dmr.result, N0=3, target.N=N)
 ```
 * Interpret the results
 
 ```
 $`EDR`
-    2 vs 2 6 vs 6 12 vs 12 20 vs 20 30 vs 30 40 vs 40 50 vs 50
-0.1 0.0003 0.1874   0.6601   0.8678   0.9484   0.9763   0.9869
-0.2 0.0033 0.4192   0.8175   0.9406   0.9792   0.9902   0.9944
-0.3 0.0063 0.5055   0.8542   0.9563   0.9858   0.9935   0.9971
-0.4 0.0075 0.5662   0.8787   0.9640   0.9868   0.9937   0.9967
-0.5 0.0188 0.5914   0.8888   0.9658   0.9886   0.9947   0.9975
-0.6 0.0148 0.6089   0.8947   0.9697   0.9890   0.9956   0.9969
-0.7 0.0217 0.6196   0.8982   0.9701   0.9906   0.9953   0.9972
-0.8 0.0305 0.6379   0.8996   0.9718   0.9882   0.9952   0.9975
-0.9 0.0354 0.6501   0.9079   0.9748   0.9920   0.9960   0.9976
-1   0.0350 0.6399   0.9075   0.9716   0.9910   0.9957   0.9974
+                   4 vs 4 6 vs 6 8 vs 8 10 vs 10 12 vs 12 14 vs 14 16 vs 16 18 vs 18 20 vs 20 22 vs 22 24 vs 24 26 vs 26 28 vs 28 30 vs 30
+0.0666666666666667 0.1654 0.4640 0.6651   0.7705   0.8482   0.8906   0.9183   0.9379   0.9527   0.9622   0.9701   0.9754   0.9795   0.9833
+0.1                0.2431 0.5482 0.7195   0.8202   0.8778   0.9113   0.9346   0.9515   0.9627   0.9699   0.9751   0.9797   0.9832   0.9859
+0.125              0.3033 0.6133 0.7577   0.8471   0.8977   0.9291   0.9490   0.9630   0.9702   0.9751   0.9804   0.9838   0.9883   0.9909
+0.166666666666667  0.3203 0.6144 0.7648   0.8556   0.8997   0.9303   0.9508   0.9643   0.9724   0.9786   0.9828   0.9865   0.9896   0.9913
+0.25               0.3643 0.6402 0.7889   0.8630   0.9049   0.9377   0.9537   0.9654   0.9736   0.9796   0.9836   0.9872   0.9904   0.9918
+                   32 vs 32 34 vs 34 36 vs 36 38 vs 38 40 vs 40 42 vs 42 44 vs 44 46 vs 46 48 vs 48 50 vs 50
+0.0666666666666667   0.9860   0.9881   0.9898   0.9910   0.9925   0.9933   0.9940   0.9948   0.9953   0.9955
+0.1                  0.9883   0.9900   0.9914   0.9923   0.9928   0.9935   0.9943   0.9949   0.9954   0.9957
+0.125                0.9923   0.9935   0.9944   0.9949   0.9958   0.9965   0.9970   0.9973   0.9975   0.9979
+0.166666666666667    0.9925   0.9932   0.9943   0.9953   0.9957   0.9963   0.9970   0.9974   0.9979   0.9981
+0.25                 0.9928   0.9933   0.9945   0.9952   0.9959   0.9964   0.9967   0.9972   0.9975   0.9977
 
 $DeclareDMR
-    2 vs 2 6 vs 6 12 vs 12 20 vs 20 30 vs 30 40 vs 40 50 vs 50
-0.1      0    232      820     1078     1178     1213     1226
-0.2      4    526     1026     1180     1229     1243     1248
-0.3      8    622     1052     1178     1214     1224     1228
-0.4      9    708     1099     1206     1235     1243     1247
-0.5     24    748     1125     1222     1251     1259     1262
-0.6     18    754     1108     1201     1225     1233     1235
-0.7     27    769     1115     1204     1230     1236     1238
-0.8     38    805     1136     1226     1247     1256     1259
-0.9     44    811     1132     1216     1237     1242     1244
-1       44    805     1141     1222     1246     1252     1255
+                   4 vs 4 6 vs 6 8 vs 8 10 vs 10 12 vs 12 14 vs 14 16 vs 16 18 vs 18 20 vs 20 22 vs 22 24 vs 24 26 vs 26 28 vs 28 30 vs 30
+0.0666666666666667    203    573    822      952     1048     1100     1134     1159     1177     1189     1199     1205     1210     1215
+0.1                   304    686    902     1028     1100     1142     1171     1192     1206     1215     1222     1227     1232     1235
+0.125                 378    765    946     1058     1120     1159     1185     1202     1211     1217     1224     1228     1234     1237
+0.166666666666667     398    764    952     1065     1120     1158     1183     1200     1210     1218     1224     1228     1232     1234
+0.25                  459    807    994     1087     1140     1182     1202     1216     1227     1234     1239     1244     1248     1250
+                   32 vs 32 34 vs 34 36 vs 36 38 vs 38 40 vs 40 42 vs 42 44 vs 44 46 vs 46 48 vs 48 50 vs 50
+0.0666666666666667     1218     1221     1223     1225     1226     1227     1228     1229     1230     1230
+0.1                    1238     1240     1242     1243     1244     1245     1246     1246     1247     1247
+0.125                  1238     1240     1241     1242     1243     1244     1244     1245     1245     1245
+0.166666666666667      1235     1236     1238     1239     1239     1240     1241     1242     1242     1243
+0.25                   1251     1252     1253     1254     1255     1256     1256     1256     1257     1257
 
 $FDR.matrix
-    2 vs 2 6 vs 6 12 vs 12 20 vs 20 30 vs 30 40 vs 40 50 vs 50
-0.1 0.0000 0.0486   0.0496   0.0499   0.0496   0.0497   0.0497
-0.2 0.0000 0.0493   0.0496   0.0497   0.0497   0.0497   0.0497
-0.3 0.0000 0.0495   0.0496   0.0498   0.0497   0.0495   0.0498
-0.4 0.0033 0.0495   0.0496   0.0497   0.0493   0.0499   0.0498
-0.5 0.0328 0.0495   0.0497   0.0499   0.0496   0.0498   0.0498
-0.6 0.0269 0.0495   0.0494   0.0495   0.0497   0.0497   0.0499
-0.7 0.0286 0.0495   0.0496   0.0497   0.0498   0.0497   0.0496
-0.8 0.0306 0.0494   0.0497   0.0495   0.0498   0.0498   0.0498
-0.9 0.0334 0.0494   0.0496   0.0496   0.0497   0.0496   0.0493
-1   0.0385 0.0497   0.0496   0.0497   0.0496   0.0499   0.0499
+                   4 vs 4 6 vs 6 8 vs 8 10 vs 10 12 vs 12 14 vs 14 16 vs 16 18 vs 18 20 vs 20 22 vs 22 24 vs 24 26 vs 26 28 vs 28 30 vs 30
+0.0666666666666667 0.0474 0.0494 0.0496   0.0494   0.0498   0.0497   0.0495   0.0498   0.0498   0.0494   0.0499   0.0497   0.0497   0.0498
+0.1                0.0481 0.0493 0.0496   0.0495   0.0496   0.0497   0.0495   0.0497   0.0496   0.0497   0.0497   0.0498   0.0497   0.0496
+0.125              0.0486 0.0493 0.0497   0.0498   0.0497   0.0496   0.0497   0.0498   0.0494   0.0496   0.0496   0.0496   0.0497   0.0500
+0.166666666666667  0.0493 0.0495 0.0494   0.0497   0.0498   0.0497   0.0496   0.0499   0.0496   0.0497   0.0499   0.0499   0.0496   0.0494
+0.25               0.0493 0.0496 0.0498   0.0498   0.0495   0.0498   0.0497   0.0496   0.0497   0.0495   0.0495   0.0495   0.0498   0.0498
+                   32 vs 32 34 vs 34 36 vs 36 38 vs 38 40 vs 40 42 vs 42 44 vs 44 46 vs 46 48 vs 48 50 vs 50
+0.0666666666666667   0.0497   0.0497   0.0496   0.0495   0.0496   0.0495   0.0495   0.0496   0.0496   0.0496
+0.1                  0.0497   0.0498   0.0498   0.0498   0.0498   0.0498   0.0497   0.0496   0.0495   0.0495
+0.125                0.0499   0.0499   0.0499   0.0499   0.0498   0.0497   0.0497   0.0497   0.0496   0.0496
+0.166666666666667    0.0494   0.0495   0.0495   0.0495   0.0496   0.0495   0.0496   0.0496   0.0498   0.0498
+0.25                 0.0499   0.0499   0.0499   0.0499   0.0500   0.0498   0.0498   0.0498   0.0498   0.0497
 
 attr(,"class")
 [1] "list"            "MethylSeqDesign"
@@ -80,36 +84,73 @@ plotContour(predict.result)
 ![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/Contour.png)
 * 3D plot
 ```
-plot3D(predict.result)
+plot3d(predict.result)
 ```
 ![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/3D.png)
 ## Study Design
 * Goal1: the minimun budget to achieve 80% power
 ```
-designOptim(predict.result, pilot.R=40, prop, N, targetEDR=0.8)
+design.res1<-designOptim(predict.result, pilot.R=pilot.R, targetEDR=0.8)
+design.res1$res
 ```
 ```
-$`min.budget`
-[1] 6400
-
-$optim.N
-[1] 12 12
+$`optim.N`
+[1] 10
 
 $optim.R
-[1] 8
+[1] 0.1
+
+$EDR.target
+[1] 0.8
+
+$EDR.achive
+[1] 0.8202
+
+$min.budget
+[1] 9000
 ```
+* N and R plot, the admissible points are in black, and inadmissible points are in grey. The optimal N and R combination is in red.
+```
+design.res1$plot1
+```
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/Goal1.1.png)
+
+* Cost and EDR plot, the corresponding points for admissible points are in black, and for inadmissible points are in grey. The corresponding point for optimal N and R combination is in red.
+```
+design.res1$plot2
+```
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/Goal1.2.png)
 
 * Goal2: we want to know the maximum power under $20000 budget
 ```
-designOptim(predict.result, pilot.R=40, prop, N, budget=20000)
+design.res2<-designOptim(predict.result, pilot.R=pilot.R, R=R, N=N, budget=20000)
+design.res2$res
 ```
 ```
-$`max.EDR`
-[1] 0.9877
-
-$optim.N
-[1] 40
+$`optim.N`
+[1] 20
 
 $optim.R
-[1] 8
+[1] 0.125
+
+$budget
+[1] 20000
+
+$cost
+[1] 19500
+
+$max.EDR
+[1] 0.9702
 ```
+* N and R plot, the admissible points are in black, and inadmissible points are in grey. The optimal N and R combination is in red.
+```
+design.res2$plot1
+```
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/Goal2.1.png)
+
+* Cost and EDR plot, the corresponding points for admissible points are in black, and for inadmissible points are in grey. The corresponding point for optimal N and R combination is in red.
+```
+design.res2$plot2
+```
+![Plot of EDR by change of N and R](https://github.com/liupeng2117/MethylSeqDesign/raw/master/img/Goal2.2.png)
+

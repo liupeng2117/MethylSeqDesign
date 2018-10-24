@@ -4,13 +4,14 @@
 #' the sample size for each group. If the two groups have the same sample size, N0 can be a single numeric value. 
 #' @param cov.matrix a numeric matrix or data frame of coverage, the rows are genes and columns are samples.
 #' @param methyl.matrix a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.
-#' @param prop a numeric vector meaning the proportion of subsampling. If you do not want to do subsampling, set prop=1.
+#' @param R a numeric vector meaning the sequencing depth of interest in number of lanes for down sampling. R should not be bigger than pilot.R
+#' @param piot.R Sequencing depth of pilot data in number of lanes. If you do not want to change the sequencing depth in power calculation, you can set pilot.R=R.
 #' @return a list of three element, the first element is a vector of p values for each gene, the second element is a matrix of 
 #' model parameters and estimated tagwise dispersion fai. The third element is a matrix of ratios for different prop. 
 #' @export DMR.analysis
 #'
 #' @examples
-DMR.analysis <- function(N0, cov.matrix, methyl.matrix, prop = 1) {
+DMR.analysis <- function(N0, cov.matrix, methyl.matrix, R, pilot.R) {
     if (class(N0) != "numeric" | length(N0) > 2) {
         stop("Argument N0 is not correctly specified")
     } else if (length(N0) == 1) {
@@ -38,10 +39,10 @@ DMR.analysis <- function(N0, cov.matrix, methyl.matrix, prop = 1) {
     test.result <- Z.wald(x = N0, cov.matrix, methyl.matrix, fai = fai.est, a = 1)
     p.values <- test.result[[1]]
     # calculate ratio of psai
-    factorR <- matrix(, nrow = length(p.values), ncol = length(prop))
-    colnames(factorR) <- prop
-    for (i in 1:length(prop)) {
-        cov.matrix1 <- downsampleMatrix(cov.matrix, prop = prop[i])
+    factorR <- matrix(, nrow = length(p.values), ncol = length(R))
+    colnames(factorR) <- R
+    for (i in 1:length(R)) {
+        cov.matrix1 <- downsampleMatrix(cov.matrix, prop = R[i]/pilot.R)
         data0 = data1 = cov.matrix
         for (j in 1:sum(N0)) {
             m0 <- cov.matrix[, j]

@@ -4,21 +4,22 @@
 \alias{designOptim}
 \title{Optimize N and R}
 \usage{
-designOptim(EDR.result, pilot.R, prop, target.N, targetEDR = NULL,
-  budget = NULL, price_per_lane = 2000, fix_price_per_sample = 100,
-  depth_per_lane = 150)
+designOptim(EDR.result, pilot.R, R = c(1/10, 1/8, 1/6, 1/4, 1/2, 1, 1.5,
+  2), N = seq(4, 50, 2), targetEDR = NULL, budget = NULL,
+  price_per_lane = 1500, fix_price_per_sample = 300,
+  depth_per_lane = 250)
 }
 \arguments{
 \item{EDR.result}{a MethylSeqDesign object}
 
-\item{pilot.R}{sequencing depth of pilot data in millions}
+\item{pilot.R}{sequencing depth of pilot data in number of lanes}
 
-\item{prop}{a numeric vector of propotion of subsampling}
+\item{R}{The sequencing depth of interest in number of lanes, input is a vector.}
 
-\item{target.N}{a numeric vector or a matrix of target sample size. If it is a matrix, the number of columns is 2, and the number of rows
+\item{N}{The sample size of interest per group, input is a vector.
 equals the number of target sample size.}
 
-\item{targetEDR}{the target EDR want to achieve}
+\item{targetEDR}{the target EDR to achieve}
 
 \item{budget}{the budget limit}
 
@@ -27,7 +28,8 @@ equals the number of target sample size.}
 \item{fix_price_per_sample}{the fixed part of the price per sample}
 }
 \value{
-a list of the optimal EDR/budget, and the corresponding sample size in two groups and sequencing depth per sample in million reads.
+a list of three elements. The first element gives the best N and R combination, and optimal EDR/cost given budget/target EDR. 
+The second element is a plot of admissible/inadmissible N and R combinations. The third element is a plot of cost and EDR.
 }
 \description{
 Optimize N and R

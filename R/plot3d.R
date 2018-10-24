@@ -10,8 +10,11 @@ plot3d <- function(x) {
         install.packages("plotly")
     }
     library(plotly)
-    estimated.EDR <- as.matrix(x$EDR)
-    p <- plot_ly(z = ~estimated.EDR) %>% add_surface() %>% layout(scene = list(xaxis = list(title = "Sample size"), yaxis = list(title = "Seqencing depth per sample"), 
-        zaxis = list(title = "estimated EDR")))
+    N <- as.numeric(sapply(strsplit(colnames(x$EDR), " vs "), function(x) x[1]))
+    prop <- as.numeric(rownames(x$EDR))
+    plot3d.data <- list(sample.size = N, depth.per.sample = prop, estimated.EDR = x$EDR)
+    
+    p <- plot_ly(x = plot3d.data$sample.size, y = plot3d.data$depth.per.sample, z = plot3d.data$estimated.EDR) %>% add_surface() %>% layout(scene = list(xaxis = list(title = "N"), 
+        yaxis = list(title = "R"), zaxis = list(title = "EDR")))
     return(p)
 }

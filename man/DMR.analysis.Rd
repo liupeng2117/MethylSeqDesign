@@ -4,7 +4,7 @@
 \alias{DMR.analysis}
 \title{Differential methylation analysis on pilot data}
 \usage{
-DMR.analysis(N0, cov.matrix, methyl.matrix, prop = 1)
+DMR.analysis(N0, cov.matrix, methyl.matrix, R, pilot.R)
 }
 \arguments{
 \item{N0}{a numeric vector of length 2 containing sample size of the pilot data, the number of each element is 
@@ -14,7 +14,9 @@ the sample size for each group. If the two groups have the same sample size, N0 
 
 \item{methyl.matrix}{a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.}
 
-\item{prop}{a numeric vector meaning the proportion of subsampling. If you do not want to do subsampling, set prop=1.}
+\item{R}{a numeric vector meaning the sequencing depth of interest in number of lanes for down sampling. R should not be bigger than pilot.R}
+
+\item{piot.R}{Sequencing depth of pilot data in number of lanes. If you do not want to change the sequencing depth in power calculation, you can set pilot.R=R.}
 }
 \value{
 a list of three element, the first element is a vector of p values for each gene, the second element is a matrix of 
