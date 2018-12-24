@@ -12,12 +12,11 @@ designOptim(EDR.result, pilot.R, R = c(1/10, 1/8, 1/6, 1/4, 1/2, 1, 1.5,
 \arguments{
 \item{EDR.result}{a MethylSeqDesign object}
 
-\item{pilot.R}{sequencing depth of pilot data in number of lanes}
+\item{pilot.R}{the sequencing depth of pilot data in number of lanes}
 
-\item{R}{The sequencing depth of interest in number of lanes, input is a vector.}
+\item{R}{the targeted sequencing depth in number of lanes, input can be a vector.}
 
-\item{N}{The sample size of interest per group, input is a vector.
-equals the number of target sample size.}
+\item{N}{the targeted sample size per group, input can be a vector.}
 
 \item{targetEDR}{the target EDR to achieve}
 
@@ -25,7 +24,9 @@ equals the number of target sample size.}
 
 \item{price_per_lane}{the price per lane for Methyl-Seq}
 
-\item{fix_price_per_sample}{the fixed part of the price per sample}
+\item{fix_price_per_sample}{the fixed part of the price per sample including the bisulfite treatment}
+
+\item{depth_per_lane}{the total number of reads per lane in millions}
 }
 \value{
 a list of three elements. The first element gives the best N and R combination, and optimal EDR/cost given budget/target EDR. 

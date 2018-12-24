@@ -4,8 +4,6 @@ Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: MethylSeqDesign is a tool for Methyl-Seq power calculation and study design analysis. It controls FDR and calculates power at a genome-wide scale, both sample size (N) and sequencing depth (R) are considered. it takes into account the genome-wide variation of effect size and dispersion by utilizing a pilot data. This tool can calculates genome-wide power(i.e. expected discovery rate(EDR)) given a pilot data, and help you find the optimal N and R combinations for a given budget or a target EDR level. 
 Depends: R (>= 3.5.1)
-Imports:
-    ggplot2
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

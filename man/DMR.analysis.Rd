@@ -7,20 +7,20 @@
 DMR.analysis(N0, cov.matrix, methyl.matrix, R, pilot.R)
 }
 \arguments{
-\item{N0}{a numeric vector of length 2 containing sample size of the pilot data, the number of each element is 
-the sample size for each group. If the two groups have the same sample size, N0 can be a single numeric value.}
+\item{N0}{the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2 
+specifying the sample size for each group.}
 
 \item{cov.matrix}{a numeric matrix or data frame of coverage, the rows are genes and columns are samples.}
 
 \item{methyl.matrix}{a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.}
 
-\item{R}{a numeric vector meaning the sequencing depth of interest in number of lanes for down sampling. R should not be bigger than pilot.R}
+\item{R}{the targeted sequencing depth in number of lanes. Input can be a vector. R is no larger than pilot.R.}
 
-\item{piot.R}{Sequencing depth of pilot data in number of lanes. If you do not want to change the sequencing depth in power calculation, you can set pilot.R=R.}
+\item{piot.R}{Sequencing depth of pilot data in number of lanes.}
 }
 \value{
-a list of three element, the first element is a vector of p values for each gene, the second element is a matrix of 
-model parameters and estimated tagwise dispersion fai. The third element is a matrix of ratios for different prop.
+a list of three element, the first element is the p values from DM analysis, the second element is a matrix of 
+GLM model parameters and estimated tagwise dispersion \fai for each region. The third element is a matrix of ratios for different sequencing depth.
 }
 \description{
 Differential methylation analysis on pilot data

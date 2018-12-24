@@ -4,9 +4,8 @@ An R package for the study design and power calculation issues of Methyl-Seq exp
 You can install this package by copying and paste the following code into R
 ```
 install.packages("devtools") ## In case you didn't install devtools
-library(devtools)
 devtools::install_github("gitlongor/pi0") # install the dependency pi0
-install_github("liupeng2117/MethylSeqDesign")
+devtools::install_github("liupeng2117/MethylSeqDesign")
 ```
 ## Genome-wide power calculation
 * Call the example data. The toy example contains the mouse methylation data from 6 sample in 2 groups, each group has 3 samples.
@@ -20,7 +19,7 @@ pilot.R=1/4
 R=c(1/15, 1/10, 1/8, 1/6, 1/4)
 dmr.result<-DMR.analysis(N0=3,cov.matrix=Mouse$cov.matrix, methyl.matrix=Mouse$methyl.matrix, pilot.R=pilot.R, R=R)
 ```
-* Predict expected discovery rate(EDR) when there are N=2,6,12,30,40,50 samples in each group. EDR is the genome wide power we are interested in. EDR=the number of detected DMR/The total number of DMR. This step may take a few minutes
+* Predict expected discovery rate(EDR) when there are N=2,6,12,30,40,50 samples per group. EDR is the genome wide power we are interested in. EDR=the number of detected DMR/The total number of DMR. This step may take a few minutes
 ```
 N=seq(4,50,2)
 predict.result<-Estimate.EDR.from.pilot(dmr.result, N0=3, target.N=N)

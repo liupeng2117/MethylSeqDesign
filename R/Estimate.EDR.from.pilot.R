@@ -1,15 +1,14 @@
-#' Title Estimate EDR based on p values 
+#' Estimate EDR based on p values 
 #'
-#' @param res result object from DMR analysis
-#' @param N0 a numeric vector of length 2 containing sample size of the pilot data, the number of each element is 
-#' the sample size for each group. If the two groups have the same sample size, N0 can be a single numeric value.
-#' @param target.N target sample size per group. It is a matrix of two columns, each row contains the group sizes
-#' for one target sample size.
-#' @param thresh.p threshold for CBUM mixture model fitting, default is set to 0.005
-#' @param FDR the level of False discovery rate to control, by default is set to 0.05
-#' @param M Number of parametric bootstrap, default is 10
+#' @param res the result from DMR analysis
+#' @param N0 the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2 
+#' specifying the sample size for each group.
+#' @param target.N the target sample size per group. Input can be a vector. If the targeted sample size is unbalanced, the input is a matrix of two columns
+#' @param thresh.p the threshold for CBUM mixture model fitting, default is set to 0.005
+#' @param FDR the level of False discovery rate to control, by default it is set to 0.05
+#' @param M the time of parametric bootstrap, default is 10
 #'
-#' @return a list of 3 element. The first element is a matrix of EDR, the second element is a matrix of declared
+#' @return A list of 3 element. The first element is a matrix of EDR, the second element is a matrix of declared
 #' Number of DMR, the third element is a matrix of empirical FDR.
 #' @export Estimate.EDR.from.pilot
 #'
@@ -62,7 +61,7 @@ Estimate.EDR.from.pilot <- function(res, N0, target.N, thresh.p = 0.005, FDR = 0
     
     # step 4: calculate estimated EDR using parametric bootstrap method
     EDR = DeclareDMR = FDR.matrix = matrix(, nrow = ncol(factorR), ncol = nrow(target.N))
-    rownames(EDR) = rownames(DeclareDMR) = rownames(FDR.matrix) = colnames(factorR)
+    rownames(EDR) = rownames(DeclareDMR) = rownames(FDR.matrix) = round(colnames(factorR), 3)
     colnames(EDR) = colnames(DeclareDMR) = colnames(FDR.matrix) = apply(target.N, 1, function(x) paste(x, sep = "", collapse = " vs "))
     for (i in 1:ncol(factorR)) {
         Result = lapply(1:M, function(x) Resampling(target.N, posterior, p.values, parameter, ngenes, FDR, factorR[, i]))
@@ -127,7 +126,8 @@ MixtureModel.Fittting.pi0 <- function(p.values, restrict = FALSE, l.upper = 0.99
         s.lower = 1
     }
     tryCatch({
-        pars = optim(init, fn = fBUM, d = p.values, lambda = lambda, method = "L-BFGS-B", upper = c(r.upper, s.upper), lower = c(r.lower, s.lower))$par
+        pars = optim(init, fn = fBUM, d = p.values, lambda = lambda, method = "L-BFGS-B", upper = c(r.upper, s.upper), lower = c(r.lower, 
+            s.lower))$par
         LL = sum(log(lambda + (1 - lambda) * p.values^(pars[1] - 1) * (1 - p.values)^(pars[2] - 1)/beta(pars[1], pars[2])))
         out.par <- c(lambda, pars, LL)
         names(out.par) <- c("lambda", "r", "s", "LL")
@@ -162,7 +162,8 @@ get.dm.regions <- function(p, level = 0.05, dmr) {
 # calculate estimated EDR using parametric bootstrap method
 Resampling <- function(target.N, posterior, p.values, parameter, ngenes, FDR, factorR) {
     
-    DE_status_posterior = sapply(1:length(posterior), function(x) sample(c(FALSE, TRUE), 1, prob = c(posterior[x], 1 - posterior[x]), replace = TRUE))
+    DE_status_posterior = sapply(1:length(posterior), function(x) sample(c(FALSE, TRUE), 1, prob = c(posterior[x], 1 - posterior[x]), 
+        replace = TRUE))
     
     transform.p.values.norm <- function(p.values.each, DE_status_each, parameter, factorR.each) {
         n.old <- parameter[[1]]
@@ -176,7 +177,8 @@ Resampling <- function(target.N, posterior, p.values, parameter, ngenes, FDR, fa
         } else return(rep(p.values.each, nrow(n.new)))
     }
     
-    p.values.star.posterior = sapply(1:ngenes, function(x) transform.p.values.norm(p.values[x], DE_status_posterior[x], parameter = parameter, factorR.each = factorR[x]))
+    p.values.star.posterior = sapply(1:ngenes, function(x) transform.p.values.norm(p.values[x], DE_status_posterior[x], parameter = parameter, 
+        factorR.each = factorR[x]))
     
     p.values.star.posterior = matrix(p.values.star.posterior, ncol = nrow(target.N), byrow = T)
     
