@@ -61,7 +61,7 @@ Estimate.EDR.from.pilot <- function(res, N0, target.N, thresh.p = 0.005, FDR = 0
     
     # step 4: calculate estimated EDR using parametric bootstrap method
     EDR = DeclareDMR = FDR.matrix = matrix(, nrow = ncol(factorR), ncol = nrow(target.N))
-    rownames(EDR) = rownames(DeclareDMR) = rownames(FDR.matrix) = round(colnames(factorR), 3)
+    rownames(EDR) = rownames(DeclareDMR) = rownames(FDR.matrix) = round(as.numeric(colnames(factorR)), 3)
     colnames(EDR) = colnames(DeclareDMR) = colnames(FDR.matrix) = apply(target.N, 1, function(x) paste(x, sep = "", collapse = " vs "))
     for (i in 1:ncol(factorR)) {
         Result = lapply(1:M, function(x) Resampling(target.N, posterior, p.values, parameter, ngenes, FDR, factorR[, i]))

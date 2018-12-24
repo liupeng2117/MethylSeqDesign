@@ -20,7 +20,7 @@ specifying the sample size for each group.}
 }
 \value{
 a list of three element, the first element is the p values from DM analysis, the second element is a matrix of 
-GLM model parameters and estimated tagwise dispersion \fai for each region. The third element is a matrix of ratios for different sequencing depth.
+GLM model parameters and estimated tagwise dispersion for each region. The third element is a matrix of ratios for different sequencing depth.
 }
 \description{
 Differential methylation analysis on pilot data
