@@ -4,13 +4,20 @@
 \alias{Estimate.EDR.from.pilot}
 \title{Estimate EDR based on p values}
 \usage{
-Estimate.EDR.from.pilot(res, N0, target.N, thresh.p = 0.005,
-  FDR = 0.05, M = 10)
+Estimate.EDR.from.pilot(
+  res,
+  N0,
+  target.N,
+  thresh.p = 0.005,
+  FDR = 0.05,
+  M = 10,
+  restrict = FALSE
+)
 }
 \arguments{
 \item{res}{the result from DMR analysis}
 
-\item{N0}{the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2 
+\item{N0}{the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2
 specifying the sample size for each group.}
 
 \item{target.N}{the target sample size per group. Input can be a vector. If the targeted sample size is unbalanced, the input is a matrix of two columns}
@@ -20,6 +27,8 @@ specifying the sample size for each group.}
 \item{FDR}{the level of False discovery rate to control, by default it is set to 0.05}
 
 \item{M}{the time of parametric bootstrap, default is 10}
+
+\item{restrict}{restrict lambda value, default is FALSE}
 }
 \value{
 A list of 3 element. The first element is a matrix of EDR, the second element is a matrix of declared
