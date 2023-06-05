@@ -1,13 +1,13 @@
 #' Differential methylation analysis on pilot data
 #'
-#' @param N0  the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2 
-#' specifying the sample size for each group. 
+#' @param N0  the sample size of the pilot data per group. If the two groups of the pilot data have different sample size, input can be a vector of length 2
+#' specifying the sample size for each group.
 #' @param cov.matrix a numeric matrix or data frame of coverage, the rows are genes and columns are samples.
 #' @param methyl.matrix a numeric matrix or data frame  of methylated read count, the rows are genes and columns are samples. A one to one correspondence between the matrix of methylated read count and the matrix of coverage is required.
 #' @param R the targeted sequencing depth in number of lanes. Input can be a vector. R is no larger than pilot.R.
 #' @param piot.R Sequencing depth of pilot data in number of lanes.
-#' @return a list of three element, the first element is the p values from DM analysis, the second element is a matrix of 
-#' GLM model parameters and estimated tagwise dispersion for each region. The third element is a matrix of ratios for different sequencing depth. 
+#' @return a list of three element, the first element is the p values from DM analysis, the second element is a matrix of
+#' GLM model parameters and estimated tagwise dispersion for each region. The third element is a matrix of ratios for different sequencing depth.
 #' @export DMR.analysis
 #'
 #' @examples
@@ -17,23 +17,23 @@ DMR.analysis <- function(N0, cov.matrix, methyl.matrix, R, pilot.R) {
     } else if (length(N0) == 1) {
         N0 = rep(N0, 2)
     }
-    if (class(cov.matrix) == "data.frame") {
+    if ("data.frame" %in% tolower(class(cov.matrix))) {
         cov.matrix = as.matrix(cov.matrix)
     }
-    if (class(methyl.matrix) == "data.frame") {
+    if ("data.frame" %in% tolower(class(methyl.matrix))) {
         methyl.matrix = as.matrix(methyl.matrix)
     }
-    if (class(cov.matrix) != "matrix") {
+    if (!("matrix" %in% tolower(class(cov.matrix)))) {
         stop("input coverage matrix should be either matrix or data frame")
     }
-    if (class(methyl.matrix) != c("matrix")) {
+    if (!("matrix" %in% tolower(class(methyl.matrix)))) {
         stop("input coverage matrix should be either matrix or data frame")
     }
     if (!"DropletUtils" %in% rownames(installed.packages())) {
         install.packages("DropletUtils")
     }
     library(DropletUtils)
-    
+
     print(paste(N0, sep = "", collapse = " vs "))
     fai.est <- estimate.fai(x = N0, cov.matrix, methyl.matrix)
     test.result <- Z.wald(x = N0, cov.matrix, methyl.matrix, fai = fai.est, a = 1)
@@ -50,18 +50,18 @@ DMR.analysis <- function(N0, cov.matrix, methyl.matrix, R, pilot.R) {
             data0[, j] <- m0/(1 + (m0 - 1) * fai.est)
             data1[, j] <- m1/(1 + (m1 - 1) * fai.est)
         }
-        
+
         mean.group1 <- apply(data0[, 1:N0[1], drop = F], 1, mean)
         mean.group2 <- apply(data0[, (N0[1] + 1):sum(N0), drop = F], 1, mean)
         psai0 <- (mean.group1 + mean.group2)/(mean.group1 * mean.group2)
-        
+
         mean.group1 <- apply(data1[, 1:N0[1], drop = F], 1, mean)
         mean.group2 <- apply(data1[, (N0[1] + 1):sum(N0), drop = F], 1, mean)
         psai1 <- (mean.group1 + mean.group2)/(mean.group1 * mean.group2)
-        
+
         factorR[, i] = psai0/psai1
     }
-    
+
     model <- cbind(beta0 = test.result[[2]], beta1 = test.result[[3]], fai = fai.est)
     return(list(p.values = p.values, model = model, factorR = factorR))
 }
@@ -82,21 +82,21 @@ Z.wald <- function(x, cov.matrix, sim.meth, fai, a = 1) {
     if (n.groups > 2) {
         stop("Currently more than 2 groups is not allowed")
     }
-    
+
     # Assign each group size
     for (i in 1:n.groups) {
         assign(paste0("D", i), x[i])
     }
-    
+
     ### calculate beta1-hat
     chi2 <- rep(0, G)
     beta0.hat <- rep(0, G)
     beta1.hat <- rep(0, G)
-    
+
     for (i in 1:G) {
         tryCatch({
             X <- matrix(c(rep(1, D), rep(1, D1), rep(0, D2)), ncol = 2)
-            
+
             if (n.groups > 2) {
                 c <- D1
                 for (j in 2:(n.groups - 1)) {
@@ -105,14 +105,14 @@ Z.wald <- function(x, cov.matrix, sim.meth, fai, a = 1) {
                   c = c + get(paste0("D", j))
                 }
             }
-            
+
             V.inverse <- diag(cov.matrix[i, ]/(1 + (cov.matrix[i, ] - 1) * fai))
             Z <- asin(2 * (sim.meth[i, ] + a)/(cov.matrix[i, ] + 2 * a) - 1)
             sigma <- solve(t(X) %*% V.inverse %*% X)
             beta.hat <- sigma %*% t(X) %*% V.inverse %*% Z
             beta0.hat[i] <- beta.hat[1]
             beta1.hat[i] <- beta.hat[2]
-            
+
             C <- diag(rep(1, n.groups))[, -1]
             var <- t(C) %*% sigma %*% C
             chi2[i] <- t(t(C) %*% beta.hat) %*% solve(var) %*% (t(C) %*% beta.hat)
@@ -137,8 +137,8 @@ estimate.fai <- function(cov.matrix, methyl.matrix, a = 1, x) {
     for (i in 1:n.groups) {
         assign(paste0("D", i), x[i])
     }
-    
-    if (D == 2) 
+
+    if (D == 2)
         fai.est = 0.001 else {
         fai <- rep(0, G)
         for (i in 1:G) {
@@ -149,7 +149,8 @@ estimate.fai <- function(cov.matrix, methyl.matrix, a = 1, x) {
                 if (n.groups > 2) {
                   c <- D1
                   for (j in 2:(n.groups - 1)) {
-                    col <- c(rep(0, c), rep(1, get(paste0("D", j))), rep(0, D - c - get(paste0("D", j))))
+                    col <- c(rep(0, c), rep(1, get(paste0("D", j))), rep(0, D - c - get(paste0("D",
+                      j))))
                     X <- cbind(X, col)
                     c = c + get(paste0("D", j))
                   }
